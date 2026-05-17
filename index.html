@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PromptLedgerAI // Professional Knowledge Suite</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: { logoAccent: '#feb5b5', brandMuted: '#aec6cf', brandHighlight: '#e37222', darkSlate: '#0f172a' }
+                }
+            }
+        }
+    </script>
+    <style>
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #aec6cf; border-radius: 10px; }
+    </style>
+    
+    <script src="data.js"></script>
+</head>
+<body class="bg-white text-darkSlate font-sans antialiased selection:bg-[#feb5b5]/30">
+
+    <header class="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-[#aec6cf]/40 px-6 h-20">
+        <div class="max-w-7xl mx-auto h-full flex items-center justify-between gap-4">
+            
+            <div class="flex items-center space-x-3 shrink-0">
+                <div class="flex items-center space-x-1 bg-white p-2 rounded-xl">
+                    <span class="text-2xl font-black text-[#feb5b5] tracking-tighter select-none">&gt;</span>
+                    <span class="w-4 h-1 bg-[#feb5b5] rounded-full self-end mb-2 animate-pulse"></span>
+                </div>
+                <div class="flex flex-col">
+                    <span class="text-lg font-black tracking-tight text-darkSlate">PromptLedger<span class="text-[#e37222]">AI</span></span>
+                    <span class="text-[10px] font-bold tracking-widest uppercase text-[#aec6cf] -mt-1">Knowledge Ecosystem</span>
+                </div>
+            </div>
+
+            <div class="flex items-center space-x-3 w-full max-w-xl justify-end">
+                <label class="text-xs font-black text-slate-400 uppercase tracking-wider hidden md:inline shrink-0">Track Matrix:</label>
+                <select id="globalTopicSelector" onchange="handleTrackMatrixChange(this.value)" 
+                        class="w-full border-2 border-[#aec6cf] rounded-xl px-4 py-2.5 text-xs font-bold bg-white text-darkSlate focus:outline-none focus:ring-2 focus:ring-[#feb5b5]/40 shadow-sm transition">
+                </select>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-6 py-8 grid grid-cols-1 lg:grid-cols-12 gap-8" id="academy">
+        
+        <div class="lg:col-span-3 bg-white border border-[#aec6cf]/30 rounded-3xl p-4 shadow-sm max-h-[80vh] overflow-y-auto custom-scrollbar space-y-3">
+            <h4 class="text-xs font-black text-slate-400 uppercase tracking-wider px-2 mb-1">Chapters Curriculum</h4>
+            <div class="space-y-2" id="chapterNavigationTabsContainer"></div>
+        </div>
+
+        <div class="lg:col-span-6 bg-white border-2 border-[#aec6cf]/30 rounded-3xl p-8 shadow-sm flex flex-col justify-between min-h-[700px] max-h-[80vh] overflow-y-auto custom-scrollbar">
+            
+            <div class="space-y-6">
+                <div class="flex items-center space-x-2">
+                    <span id="activeChapterBadge" class="text-xs font-bold bg-[#e37222]/10 text-[#e37222] px-2.5 py-0.5 rounded-md">Chapter 01</span>
+                    <span id="activeChapterTimeline" class="text-xs font-bold text-[#aec6cf] bg-slate-50 border border-slate-200/60 px-2 py-0.5 rounded-md">Stage 1</span>
+                </div>
+                <h2 id="activeChapterTitle" class="text-2xl font-black text-darkSlate tracking-tight leading-tight">Loading Syllabus Module...</h2>
+                <hr class="border-slate-100">
+                <div id="activeChapterContent" class="text-slate-600 text-sm leading-relaxed space-y-5 font-medium"></div>
+            </div>
+
+            <div class="bg-white rounded-2xl border border-[#aec6cf]/40 p-5 space-y-4 shadow-sm mt-8">
+                <div class="flex items-center justify-between border-b border-slate-100 pb-2">
+                    <div class="flex items-center space-x-2">
+                        <span class="w-2 h-2 rounded-full bg-[#e37222]"></span>
+                        <h4 class="text-xs font-black text-darkSlate uppercase tracking-wider">Module Skill Verification</h4>
+                    </div>
+                    <div class="flex bg-slate-100 p-0.5 rounded-lg border border-slate-200 text-[10px] font-bold" id="quizChallengeSelectorTabs"></div>
+                </div>
+
+                <div class="space-y-4">
+                    <p id="quizQuestionText" class="text-xs font-bold text-darkSlate leading-snug">Loading Challenge Statement...</p>
+                    <div class="grid grid-cols-1 gap-2" id="quizChoicesContainer"></div>
+                    <div id="quizFeedbackBox" class="hidden p-4 rounded-xl border text-xs font-bold leading-relaxed transition-all duration-100"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="lg:col-span-3 space-y-6">
+            <div class="bg-white border border-[#aec6cf]/40 rounded-3xl p-6 shadow-sm flex flex-col space-y-5">
+                <div class="border-b border-slate-100 pb-3 flex items-center justify-between">
+                    <h4 class="text-xs font-black text-darkSlate uppercase tracking-wider">Performance Deck</h4>
+                    <button onclick="resetActiveTrackScores()" class="text-[9px] font-bold text-slate-400 hover:text-[#e37222] transition uppercase tracking-wider">Reset Track</button>
+                </div>
+
+                <div class="flex flex-col gap-3">
+                    <div class="bg-slate-50 border border-slate-100 rounded-2xl p-4 flex items-center justify-between">
+                        <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Verified Answers</span>
+                        <span id="scoreTotalAnswered" class="text-base font-black text-darkSlate">0</span>
+                    </div>
+                    <div class="bg-slate-50 border border-slate-100 rounded-2xl p-4 flex items-center justify-between">
+                        <span class="text-xs font-bold text-emerald-600 uppercase tracking-wider">Correct Marks</span>
+                        <span id="scoreCorrectCount" class="text-base font-black text-emerald-600">0</span>
+                    </div>
+                    <div class="bg-slate-50 border border-slate-100 rounded-2xl p-4 flex items-center justify-between">
+                        <span class="text-xs font-bold text-[#e37222] uppercase tracking-wider">Accuracy Weight</span>
+                        <span id="scoreAccuracyPercent" class="text-base font-black text-[#e37222]">0%</span>
+                    </div>
+                </div>
+
+                <div class="space-y-1.5 pt-2 border-t border-slate-100">
+                    <div class="flex justify-between text-[10px] font-bold text-slate-500 uppercase tracking-wide">
+                        <span>Progress Level</span>
+                        <span id="scoreProgressText">0 / 72 Verified</span>
+                    </div>
+                    <div class="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden border border-slate-200/40">
+                        <div id="scoreProgressBar" class="bg-[#e37222] h-full w-0 transition-all duration-300"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-darkSlate border border-slate-800 rounded-3xl p-6 shadow-xl text-white flex flex-col justify-between space-y-4">
+                <div>
+                    <div class="flex items-center space-x-2">
+                        <span class="w-2 h-2 rounded-full bg-[#feb5b5] animate-pulse"></span>
+                        <h4 class="text-xs font-black tracking-widest uppercase text-[#aec6cf]">Global Registry</h4>
+                    </div>
+                    <h3 class="text-base font-black mt-2 text-white">Global AI Applications Ledger</h3>
+                    <p class="text-slate-400 text-[11px] leading-relaxed mt-1.5 font-medium">
+                        Access an updated, interactive directory categorizing over 100 leading global AI production applications.
+                    </p>
+                </div>
+                <button onclick="toggleLedgerModal(true)" class="w-full bg-white text-darkSlate font-bold text-xs py-3 rounded-xl hover:bg-[#feb5b5] transition text-center shadow-sm">
+                    Open Industry Ledger
+                </button>
+            </div>
+        </div>
+    </main>
+
+    <div id="globalLedgerModal" class="fixed inset-0 z-50 hidden bg-darkSlate/60 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl border border-[#aec6cf]/50 shadow-2xl w-full max-w-4xl overflow-hidden flex flex-col max-h-[85vh]">
+            <div class="px-8 py-5 border-b border-slate-100 bg-slate-50 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div class="flex items-center space-x-3">
+                    <span class="text-xl font-black text-[#feb5b5] tracking-tighter select-none">&gt;</span>
+                    <div>
+                        <h3 class="font-black text-darkSlate text-base">Global AI Production Application Matrix</h3>
+                        <p class="text-xs text-slate-400 font-medium">Categorized Ecosystem Index</p>
+                    </div>
+                </div>
+                <div class="flex bg-slate-100 p-1 rounded-xl border border-slate-200 text-[10px] font-bold shadow-inner max-w-full overflow-x-auto custom-scrollbar" id="ledgerCategoryTabsContainer"></div>
+            </div>
+            <div class="p-6 overflow-y-auto custom-scrollbar bg-white">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="ledgerApplicationsGridBody"></div>
+            </div>
+            <div class="px-8 py-3 border-t border-slate-100 bg-slate-50 flex justify-end">
+                <button onclick="toggleLedgerModal(false)" class="bg-darkSlate text-white font-bold text-xs px-5 py-2.5 rounded-xl hover:bg-[#e37222] transition">Close Matrix</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let activeTrackKey = "history"; let activeChapterId = 1; let activeQuizIndex = 0;
+        let activeLedgerCategoryKey = "Healthcare & Medical"; let masterScorecardMemoryCache = {};
+
+        function bootstrapTopicSelectorDropdown() {
+            const dropdown = document.getElementById("globalTopicSelector"); dropdown.innerHTML = "";
+            masterTopicsIndexMap.forEach(topic => {
+                const opt = document.createElement("option"); opt.value = topic.id; opt.innerText = topic.name; dropdown.appendChild(opt);
+            });
+        }
+
+        function handleTrackMatrixChange(targetKey) {
+            activeTrackKey = targetKey; activeChapterId = 1; activeQuizIndex = 0;
+            renderSidebarChapterNavigationMenu(); renderActiveModuleChallengeSelectorTabs(); lazyLoadActiveWorkspaceUI(); recalculatePlatformScorecardStatistics();
+        }
+
+        function renderSidebarChapterNavigationMenu() {
+            const box = document.getElementById("chapterNavigationTabsContainer"); box.innerHTML = "";
+            const modulesList = centralCourseCurriculumMatrix[activeTrackKey].modules;
+
+            modulesList.forEach(item => {
+                const isSelected = item.id === activeChapterId; const chapterString = item.id < 10 ? `0${item.id}` : `${item.id}`;
+                let answersInChapterCount = 0;
+                for (let q = 0; q < 6; q++) { if (masterScorecardMemoryCache[`${activeTrackKey}-${item.id}-${q}`] !== undefined) answersInChapterCount++; }
+                let badgeHTML = `<span class="text-[9px] text-slate-400 font-bold">${answersInChapterCount} / 6 Passed</span>`;
+                if (answersInChapterCount === 6) badgeHTML = `<span class="text-[9px] text-emerald-600 font-black">✓ Cleared</span>`;
+                
+                box.innerHTML += `<button onclick="switchActiveModuleView(${item.id})" class="w-full text-left p-3.5 rounded-2xl border-l-4 transition flex flex-col justify-between shadow-sm ${isSelected ? 'border-[#e37222] bg-[#feb5b5]/10' : 'border-slate-200 bg-white hover:bg-slate-50/80 hover:border-[#aec6cf]'}" ><div class="flex items-center justify-between w-full"><span class="text-[9px] font-black tracking-wider uppercase ${isSelected ? 'text-[#e37222]' : 'text-slate-400'}">Chapter ${chapterString}</span>${badgeHTML}</div><span class="text-xs font-black mt-0.5 ${isSelected ? 'text-darkSlate' : 'text-slate-700'}">${item.title}</span></button>`;
+            });
+        }
+
+        function switchActiveModuleView(id) { activeChapterId = id; activeQuizIndex = 0; renderSidebarChapterNavigationMenu(); renderActiveModuleChallengeSelectorTabs(); lazyLoadActiveWorkspaceUI(); }
+
+        function renderActiveModuleChallengeSelectorTabs() {
+            const tabsContainer = document.getElementById("quizChallengeSelectorTabs"); tabsContainer.innerHTML = "";
+            const totalQuizzesCount = centralCourseCurriculumMatrix[activeTrackKey].modules[activeChapterId - 1].quizzes.length;
+            
+            for (let i = 0; i < totalQuizzesCount; i++) {
+                const isSelectedPill = i === activeQuizIndex; const checkKey = `${activeTrackKey}-${activeChapterId}-${i}`; const answerRecordData = masterScorecardMemoryCache[checkKey];
+                let pillStyles = isSelectedPill ? "bg-white text-darkSlate shadow-sm border border-slate-200/50" : (answerRecordData !== undefined ? (answerRecordData.correct ? "text-emerald-600 font-black" : "text-red-500 font-black") : "text-slate-400 hover:text-darkSlate");
+                tabsContainer.innerHTML += `<button onclick="switchChallengeQuestionIndex(${i})" class="px-2.5 py-0.5 rounded-md transition ${pillStyles}">Ch ${i + 1}</button>`;
+            }
+        }
+
+        function switchChallengeQuestionIndex(idx) { activeQuizIndex = idx; renderActiveModuleChallengeSelectorTabs(); lazyLoadActiveWorkspaceUI(); }
+
+        function lazyLoadActiveWorkspaceUI() {
+            const activeModule = centralCourseCurriculumMatrix[activeTrackKey].modules[activeChapterId - 1];
+            const chapterString = activeChapterId < 10 ? `0${activeChapterId}` : `${activeChapterId}`;
+            
+            document.getElementById("activeChapterBadge").innerText = `Chapter ${chapterString}`; 
+            document.getElementById("activeChapterTimeline").innerText = activeModule.tag; 
+            document.getElementById("activeChapterTitle").innerText = activeModule.title; 
+            document.getElementById("activeChapterContent").innerHTML = activeModule.text;
+            loadActiveQuizQuestionDataCanvas();
+        }
+
+        function loadActiveQuizQuestionDataCanvas() {
+            const activeModule = centralCourseCurriculumMatrix[activeTrackKey].modules[activeChapterId - 1];
+            const quizData = activeModule.quizzes[activeQuizIndex];
+            
+            document.getElementById("quizQuestionText").innerText = quizData.q; 
+            const choicesContainer = document.getElementById("quizChoicesContainer"); choicesContainer.innerHTML = "";
+            const lookupKey = `${activeTrackKey}-${activeChapterId}-${activeQuizIndex}`; const pastAnswerRecord = masterScorecardMemoryCache[lookupKey];
+            
+            quizData.c.forEach((choice, index) => {
+                let btnStyle = "border-[#aec6cf]/40 bg-white hover:border-[#e37222] hover:bg-slate-50 text-slate-700";
+                if (pastAnswerRecord !== undefined) {
+                    if (choice.correct) btnStyle = "border-emerald-300 bg-emerald-50 text-emerald-900 cursor-not-allowed opacity-90";
+                    else if (pastAnswerRecord.selectedIndex === index) btnStyle = "border-red-300 bg-red-50 text-red-900 cursor-not-allowed opacity-90";
+                    else btnStyle = "border-slate-100 bg-slate-50/40 text-slate-400 cursor-not-allowed";
+                }
+                // Escaping strings cleanly for parsing
+                const escapedRationale = (choice.r || choice.reason || "Processed Checkpoint Verification").replace(/'/g, "\\'");
+                choicesContainer.innerHTML += `<button ${pastAnswerRecord !== undefined ? 'disabled' : ''} onclick="submitQuizAnswerTrackSelection(${index}, ${choice.correct}, '${escapedRationale}')" class="w-full text-left p-3 rounded-xl border font-bold text-xs transition duration-150 ${btnStyle}">${choice.t}</button>`;
+            });
+            
+            if (pastAnswerRecord !== undefined) printFeedbackBannerAlertBox(pastAnswerRecord.correct, pastAnswerRecord.rationale);
+            else document.getElementById("quizFeedbackBox").className = "hidden";
+        }
+
+        function submitQuizAnswerTrackSelection(index, isCorrect, reasonStr) {
+            const cacheKey = `${activeTrackKey}-${activeChapterId}-${activeQuizIndex}`; masterScorecardMemoryCache[cacheKey] = { selectedIndex: index, correct: isCorrect, rationale: reasonStr };
+            recalculatePlatformScorecardStatistics(); renderActiveModuleChallengeSelectorTabs(); lazyLoadActiveWorkspaceUI(); renderSidebarChapterNavigationMenu();
+        }
+
+        function recalculatePlatformScorecardStatistics() {
+            const keys = Object.keys(masterScorecardMemoryCache).filter(k => k.startsWith(`${activeTrackKey}-`)); const total = keys.length;
+            let correct = 0; keys.forEach(k => { if (masterScorecardMemoryCache[k].correct === true) correct++; });
+            const accuracy = total === 0 ? 0 : Math.round((correct / total) * 100); const maxQuizzes = 72;
+            
+            document.getElementById("scoreTotalAnswered").innerText = total; document.getElementById("scoreCorrectCount").innerText = correct; document.getElementById("scoreAccuracyPercent").innerText = `${accuracy}%`;
+            document.getElementById("scoreProgressText").innerText = `${total} / ${maxQuizzes} Verified`; document.getElementById("scoreProgressBar").style.width = `${Math.round((total / maxQuizzes) * 100)}%`;
+        }
+
+        function printFeedbackBannerAlertBox(isCorrect, rationaleText) {
+            const alertBox = document.getElementById("quizFeedbackBox"); alertBox.classList.remove("hidden"); alertBox.innerText = rationaleText;
+            alertBox.className = "p-4 rounded-xl border text-xs font-black leading-relaxed mt-2 animate-in fade-in duration-100 " + (isCorrect ? "border-emerald-200 bg-emerald-50 text-emerald-800" : "border-red-200 bg-red-50 text-red-800");
+        }
+
+        function resetActiveTrackScores() {
+            Object.keys(masterScorecardMemoryCache).forEach(key => { if (key.startsWith(`${activeTrackKey}-`)) delete masterScorecardMemoryCache[key]; });
+            recalculatePlatformScorecardStatistics(); switchActiveModuleView(1);
+        }
+
+        function toggleLedgerModal(open) {
+            const modal = document.getElementById("globalLedgerModal");
+            if (open) {
+                renderLedgerCategoryPillTabs(); renderActiveLedgerCategoryCards(); modal.classList.remove("hidden");
+            } else { modal.classList.add("hidden"); }
+        }
+
+        function renderLedgerCategoryPillTabs() {
+            const tabsBox = document.getElementById("ledgerCategoryTabsContainer"); tabsBox.innerHTML = "";
+            Object.keys(globalApplicationsRegistry).forEach(cat => {
+                const isSelected = cat === activeLedgerCategoryKey;
+                tabsBox.innerHTML += `<button onclick="switchActiveLedgerCategoryKey('${cat}')" class="px-3 py-1.5 rounded-md transition whitespace-nowrap ${isSelected ? 'bg-white text-darkSlate shadow-sm' : 'text-slate-500 hover:text-darkSlate'}">${cat}</button>`;
+            });
+        }
+
+        function switchActiveLedgerCategoryKey(catKey) {
+            activeLedgerCategoryKey = catKey; renderLedgerCategoryPillTabs(); renderActiveLedgerCategoryCards();
+        }
+
+        function renderActiveLedgerCategoryCards() {
+            const grid = document.getElementById("ledgerApplicationsGridBody"); grid.innerHTML = "";
+            const appsList = globalApplicationsRegistry[activeLedgerCategoryKey];
+            
+            appsList.forEach(app => {
+                grid.innerHTML += `
+                    <div class="border border-[#aec6cf]/50 rounded-2xl p-5 bg-slate-50/40 hover:shadow-md transition flex flex-col justify-between space-y-4">
+                        <div>
+                            <div class="flex justify-between items-start gap-2">
+                                <div>
+                                    <h4 class="font-black text-darkSlate text-sm">${app.name}</h4>
+                                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wide">Owner: ${app.company}</span>
+                                </div>
+                                <span class="text-[9px] font-black tracking-wider uppercase bg-white border border-slate-200 px-2 py-0.5 rounded text-slate-600 shrink-0">${app.price}</span>
+                            </div>
+                            <p class="text-xs text-slate-600 font-semibold mt-3 leading-relaxed border-l-2 border-[#e37222] pl-2">${app.purpose}</p>
+                            <div class="text-[11px] text-slate-500 mt-3 space-y-1.5 font-medium">
+                                <div><strong class="text-darkSlate font-bold">Key Capabilities:</strong> ${app.features || 'Advanced real-time optimization matrices.'}</div>
+                                <div><strong class="text-darkSlate font-bold">Production Use Case:</strong> ${app.useCase}</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        document.addEventListener("DOMContentLoaded", () => { bootstrapTopicSelectorDropdown(); handleTrackMatrixChange("history"); });
+    </script>
+</body>
+</html>
